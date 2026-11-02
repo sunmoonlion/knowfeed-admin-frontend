@@ -90,7 +90,7 @@
   "supply": {
     "loading": "Loading…",
     "failed": "Could not load. Please try again later.",
-    "limits": "{rate} a minute, {cap} a day, {running} at a time",
+    "limits": "{rate} a minute, {cap, plural, =0 {no daily cap} other {# a day}}, {running} at a time",
     "hours": "{n} h",
     "channels": {
       "title": "Source catalog",
@@ -230,7 +230,7 @@
       "readings": "Readings given",
       "license": "License tier of fetched data",
       "rate": "Fetches per minute at most",
-      "dailyCap": "Documents per day at most",
+      "dailyCap": "Documents per day at most (0 means unlimited)",
       "maxRunning": "Jobs at a time at most",
       "domain": "Site (domain)",
       "terms": "Terms link",

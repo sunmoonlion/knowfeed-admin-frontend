@@ -90,7 +90,7 @@
   "supply": {
     "loading": "加载中…",
     "failed": "没有取到，请稍后再试。",
-    "limits": "每分钟 {rate} 次，每天 {cap} 份，同时 {running} 个",
+    "limits": "每分钟 {rate} 次，{cap, plural, =0 {每日不限份数} other {每天 # 份}}，同时 {running} 个",
     "hours": "{n} 小时",
     "channels": {
       "title": "来源目录",
@@ -230,7 +230,7 @@
       "readings": "能给的读法",
       "license": "取来的数据属于哪一档许可",
       "rate": "每分钟最多取几次",
-      "dailyCap": "每天最多取几份",
+      "dailyCap": "每天最多取几份（0 表示不限总次数）",
       "maxRunning": "同时最多跑几个作业",
       "domain": "网站（域名）",
       "terms": "条款链接",

@@ -183,7 +183,7 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
         <input
           id="supply-cap"
           type="number"
-          min={1}
+          min={0}
           value={cap}
           onChange={(e) => setCap(e.target.value)}
         />
