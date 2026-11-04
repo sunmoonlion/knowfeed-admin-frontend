@@ -45,6 +45,7 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
   const [robots, setRobots] = useState(initial?.obey_robots ?? true)
   const [reason, setReason] = useState('')
   const [ownerSubject, setOwnerSubject] = useState(String(initial?.config.owner_subject ?? ''))
+  const [audience, setAudience] = useState(String(initial?.config.audience ?? 'owner'))
   const editing = Boolean(initial)
   const ready =
     name.trim() &&
@@ -86,7 +87,7 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
             obey_robots: robots,
             config:
               plugin === 'wind-mcp'
-                ? { ...initial?.config, owner_subject: ownerSubject.trim() }
+                ? { ...initial?.config, owner_subject: ownerSubject.trim(), audience }
                 : (initial?.config ?? {}),
           },
           { channelId: channelId.trim(), reason: reason.trim() },
@@ -160,6 +161,15 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
             value={ownerSubject}
             onChange={(e) => setOwnerSubject(e.target.value)}
           />
+          <label htmlFor="supply-audience">{t('form.windAudience')}</label>
+          <select
+            id="supply-audience"
+            value={audience}
+            onChange={(e) => setAudience(e.target.value)}
+          >
+            <option value="owner">{t('form.windOwnerOnly')}</option>
+            <option value="all_users">{t('form.windAllUsers')}</option>
+          </select>
           <p>{t('form.windScope')}</p>
         </div>
       ) : null}

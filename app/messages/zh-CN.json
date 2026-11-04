@@ -240,8 +240,11 @@
       "save": "保存",
       "register": "登记",
       "zone": "区",
-      "ownerSubject": "授权账号的身份标识",
-      "windScope": "仅供该账号使用；凭据由服务端保管，此处不要填写 Key。每天上限 0 表示不设次数上限，按串行方式调用。"
+      "ownerSubject": "凭据所属账号的身份标识",
+      "windScope": "凭据由服务端保管，不要填写Key。开放给所有账号时共享额度，仍各自确认需求、各自保存私有资料。每天上限0表示不设次数上限；调用保持串行。",
+      "windAudience": "谁可以使用这份取数额度",
+      "windOwnerOnly": "仅授权账号",
+      "windAllUsers": "平台所有已登录账号"
     },
     "detail": {
       "statusTitle": "在用、暂停、停用",

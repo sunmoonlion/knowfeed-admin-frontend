@@ -391,7 +391,12 @@ describe('Wind 正式登记与试采', () => {
     fireEvent.change(screen.getByLabelText(messages.supply.form.plugin), {
       target: { value: 'wind-mcp' },
     })
-    fireEvent.change(screen.getByLabelText('授权账号的身份标识'), { target: { value: 'alice' } })
+    fireEvent.change(screen.getByLabelText('凭据所属账号的身份标识'), {
+      target: { value: 'alice' },
+    })
+    fireEvent.change(screen.getByLabelText('谁可以使用这份取数额度'), {
+      target: { value: 'all_users' },
+    })
     fireEvent.submit(screen.getByRole('form'))
     expect(onSubmit).toHaveBeenCalledTimes(1)
     expect(onSubmit.mock.calls[0][0]).toMatchObject({
@@ -401,7 +406,7 @@ describe('Wind 正式登记与试采', () => {
       license: 'self',
       daily_cap: 0,
       max_running: 1,
-      config: { owner_subject: 'alice' },
+      config: { owner_subject: 'alice', audience: 'all_users' },
     })
   })
   it('查询参数无效时不派单，有效时保留渠道和查询内容并带CSRF', async () => {
