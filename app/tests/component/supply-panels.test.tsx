@@ -368,3 +368,96 @@ describe('登记表', () => {
     expect(input.config).toEqual({ markets: ['SZ'] })
   })
 })
+
+describe('Wind 正式登记与试采', () => {
+  it('新登记填写账号主体，允许零日上限并保留私有串行约束', () => {
+    const onSubmit = vi.fn()
+    show(
+      <RegistrationForm
+        plugins={[
+          { name: 'cninfo', kind: 'catalog' },
+          { name: 'wind-mcp', kind: 'catalog' },
+        ]}
+        pending={false}
+        onSubmit={onSubmit}
+      />,
+    )
+    fireEvent.change(screen.getByLabelText(messages.supply.form.channelId), {
+      target: { value: 'wind' },
+    })
+    fireEvent.change(screen.getByLabelText(messages.supply.form.name), {
+      target: { value: 'Wind' },
+    })
+    fireEvent.change(screen.getByLabelText(messages.supply.form.plugin), {
+      target: { value: 'wind-mcp' },
+    })
+    fireEvent.change(screen.getByLabelText('授权账号的身份标识'), { target: { value: 'alice' } })
+    fireEvent.submit(screen.getByRole('form'))
+    expect(onSubmit).toHaveBeenCalledTimes(1)
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({
+      plugin: 'wind-mcp',
+      doc_types: ['other_text'],
+      readings: ['original', 'text'],
+      license: 'self',
+      daily_cap: 0,
+      max_running: 1,
+      config: { owner_subject: 'alice' },
+    })
+  })
+  it('查询参数无效时不派单，有效时保留渠道和查询内容并带CSRF', async () => {
+    const wind = {
+      ...cninfo,
+      channel_id: 'wind',
+      name: 'Wind',
+      plugin: 'wind-mcp',
+      zone: 'collected',
+      review: 'pending',
+      doc_types: ['other_text'],
+      readings: ['original', 'text'],
+      license: 'self',
+      config: { owner_subject: 'alice' },
+    }
+    serve({
+      'GET /api/admin/v1/supply/channels': () => Response.json({ ...list, items: [wind] }),
+      'GET /api/admin/v1/supply/channels/wind': () =>
+        Response.json({ channel: wind, events: [], trials: [] }),
+      'POST /api/admin/v1/supply/channels/wind/trials': () =>
+        Response.json(
+          {
+            trial_id: 't',
+            key: {},
+            status: 'queued',
+            requested_by: 'op',
+            created_at: '2026-11-04T00:00:00Z',
+            finished_at: null,
+            listed: [],
+            fetched: null,
+            error: null,
+          },
+          { status: 202 },
+        ),
+    })
+    show(<ChannelsPanel csrfToken="csrf-token-0123456789-0123456789-abcd" />)
+    fireEvent.click(await screen.findByRole('button', { name: 'Wind' }))
+    const detail = await screen.findByRole('region', { name: 'Wind' })
+    const input = within(detail).getByLabelText('查询参数（JSON）')
+    fireEvent.change(input, { target: { value: '[]' } })
+    expect(within(detail).getByRole('button', { name: '试采' })).toBeDisabled()
+    fireEvent.change(input, { target: { value: '{"query":"synthetic"}' } })
+    fireEvent.click(within(detail).getByRole('button', { name: '试采' }))
+    await vi.waitFor(() =>
+      expect(calls.find((c) => c.method === 'POST')?.body).toEqual({
+        doc_type: 'other_text',
+        source_query: {
+          channel: 'wind',
+          service: 'financial_docs',
+          tool: 'get_company_announcements',
+          arguments: { query: 'synthetic' },
+        },
+      }),
+    )
+    expect(calls.find((c) => c.method === 'POST')?.csrf).toBe(
+      'csrf-token-0123456789-0123456789-abcd',
+    )
+  })
+})

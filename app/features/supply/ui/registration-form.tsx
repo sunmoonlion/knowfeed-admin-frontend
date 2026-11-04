@@ -44,13 +44,16 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
   const [render, setRender] = useState(initial?.render_allowed ?? false)
   const [robots, setRobots] = useState(initial?.obey_robots ?? true)
   const [reason, setReason] = useState('')
+  const [ownerSubject, setOwnerSubject] = useState(String(initial?.config.owner_subject ?? ''))
   const editing = Boolean(initial)
   const ready =
     name.trim() &&
     plugin &&
     (editing ? reason.trim() : channelId.trim()) &&
     Number(rate) > 0 &&
-    Number(cap) > 0 &&
+    cap.trim() !== '' &&
+    Number(cap) >= 0 &&
+    (plugin !== 'wind-mcp' || ownerSubject.trim()) &&
     Number(running) > 0
 
   function toggle(reading: RegistrationInput['readings'][number]) {
@@ -81,7 +84,10 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
             terms_url: terms.trim() || null,
             render_allowed: render,
             obey_robots: robots,
-            config: initial?.config ?? {},
+            config:
+              plugin === 'wind-mcp'
+                ? { ...initial?.config, owner_subject: ownerSubject.trim() }
+                : (initial?.config ?? {}),
           },
           { channelId: channelId.trim(), reason: reason.trim() },
         )
@@ -127,7 +133,17 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
           id="supply-plugin"
           value={plugin}
           disabled={editing}
-          onChange={(e) => setPlugin(e.target.value)}
+          onChange={(e) => {
+            const next = e.target.value
+            setPlugin(next)
+            if (next === 'wind-mcp') {
+              setDocTypes('other_text')
+              setReadings(['original', 'text'])
+              setLicense('self')
+              setCap('0')
+              setRunning('1')
+            }
+          }}
         >
           {usable.map((p) => (
             <option key={p.name} value={p.name}>
@@ -136,6 +152,17 @@ export function RegistrationForm({ plugins, initial, pending, onSubmit }: Props)
           ))}
         </select>
       </div>
+      {plugin === 'wind-mcp' ? (
+        <div className="schema-field">
+          <label htmlFor="supply-owner">{t('form.ownerSubject')}</label>
+          <input
+            id="supply-owner"
+            value={ownerSubject}
+            onChange={(e) => setOwnerSubject(e.target.value)}
+          />
+          <p>{t('form.windScope')}</p>
+        </div>
+      ) : null}
       <div className="schema-field">
         <label htmlFor="supply-doc-types">{t('form.docTypes')}</label>
         <input

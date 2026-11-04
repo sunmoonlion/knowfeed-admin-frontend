@@ -6,3 +6,8 @@
 验证 pnpm 测试 67 passed / 15 files（/tmp/luna-wind-admin-tests.log），typecheck、i18n 和变更格式检查通过。未发布。
 
 发布由 qwen/Jenkins；不代点用户采单、不修改线上任务。以下为此前历史：
+
+
+## 2026-11-04 Wind 正式管理入口补齐
+
+Wind 登记新增账号主体，默认私有供应商回执、original/text、串行、日次数上限0；修复原表单拒绝0上限。试采支持服务/工具/JSON参数，非对象JSON不得提交，保留原CSRF和人工审核。14项定向UI测试、typecheck、ESLint、i18n通过。仅候选，生产渠道仍需正常登记、试采、审核，不宣称已启用。

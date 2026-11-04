@@ -239,7 +239,9 @@
       "reason": "为什么改",
       "save": "保存",
       "register": "登记",
-      "zone": "区"
+      "zone": "区",
+      "ownerSubject": "授权账号的身份标识",
+      "windScope": "仅供该账号使用；凭据由服务端保管，此处不要填写 Key。每天上限 0 表示不设次数上限，按串行方式调用。"
     },
     "detail": {
       "statusTitle": "在用、暂停、停用",
@@ -285,7 +287,11 @@
       },
       "fetched": "取回 {type}，{size} 字节",
       "url": "样例网址（要在登记的网站上）",
-      "topic": "样例话题"
+      "topic": "样例话题",
+      "service": "Wind 服务",
+      "tool": "Wind 工具",
+      "arguments": "查询参数（JSON）",
+      "windLead": "按 Wind 工具目录填写服务、工具和查询参数。提交后由后台试取，会使用该账号额度；成功后仍需审核放行。"
     },
     "gapKind": {
       "all": "全部",

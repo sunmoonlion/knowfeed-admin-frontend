@@ -204,32 +204,78 @@ function TrialBox({
   const [end, setEnd] = useState('')
   const [url, setUrl] = useState(channel.domain ? `https://${channel.domain}/` : '')
   const [topic, setTopic] = useState('')
+  const [service, setService] = useState('financial_docs')
+  const [tool, setTool] = useState('get_company_announcements')
+  const [argumentsText, setArgumentsText] = useState('{}')
+  let queryArguments: Record<string, unknown> | null = null
+  try {
+    const parsed: unknown = JSON.parse(argumentsText)
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      queryArguments = parsed as Record<string, unknown>
+    }
+  } catch {
+    /* Invalid JSON disables submission. */
+  }
   const running = trialRunning(trials)
   // 样例按大类给（SDD 0045 第 3.2 节）：目录型给描述；通用网页、订阅源给这个网站上的网址；
   // 站内搜索给话题
   const sample: TrialInput | null =
-    channel.kind === 'catalog'
-      ? subject.trim() && docType.trim()
+    channel.plugin === 'wind-mcp'
+      ? service.trim() && tool.trim() && queryArguments
         ? {
-            subject: subject.trim(),
-            doc_type: docType.trim(),
-            period_start: start || undefined,
-            period_end: end || undefined,
+            doc_type: 'other_text',
+            source_query: {
+              channel: channel.channel_id,
+              service: service.trim(),
+              tool: tool.trim(),
+              arguments: queryArguments,
+            },
           }
         : null
-      : channel.kind === 'search'
-        ? topic.trim()
-          ? { topic: topic.trim() }
+      : channel.kind === 'catalog'
+        ? subject.trim() && docType.trim()
+          ? {
+              subject: subject.trim(),
+              doc_type: docType.trim(),
+              period_start: start || undefined,
+              period_end: end || undefined,
+            }
           : null
-        : url.trim()
-          ? { url: url.trim() }
-          : null
+        : channel.kind === 'search'
+          ? topic.trim()
+            ? { topic: topic.trim() }
+            : null
+          : url.trim()
+            ? { url: url.trim() }
+            : null
   return (
     <>
       <h3>{t('detail.trialTitle')}</h3>
-      <p className="text-muted-foreground text-sm">{t(`detail.trialLeadBy.${channel.kind}`)}</p>
+      <p className="text-muted-foreground text-sm">
+        {channel.plugin === 'wind-mcp'
+          ? t('trial.windLead')
+          : t(`detail.trialLeadBy.${channel.kind}`)}
+      </p>
       <div className="reference-actions">
-        {channel.kind === 'catalog' ? (
+        {channel.plugin === 'wind-mcp' ? (
+          <>
+            <input
+              aria-label={t('trial.service')}
+              value={service}
+              onChange={(e) => setService(e.target.value)}
+            />
+            <input
+              aria-label={t('trial.tool')}
+              value={tool}
+              onChange={(e) => setTool(e.target.value)}
+            />
+            <textarea
+              aria-label={t('trial.arguments')}
+              value={argumentsText}
+              onChange={(e) => setArgumentsText(e.target.value)}
+            />
+          </>
+        ) : channel.kind === 'catalog' ? (
           <>
             <input
               aria-label={t('trial.subject')}

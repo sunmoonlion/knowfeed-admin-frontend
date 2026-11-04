@@ -239,7 +239,9 @@
       "reason": "Why change it",
       "save": "Save",
       "register": "Register",
-      "zone": "Zone"
+      "zone": "Zone",
+      "ownerSubject": "Authorized account subject",
+      "windScope": "Private to this account. Credentials are managed by the server; do not enter a key here. A daily cap of zero means unlimited calls; execution remains serial."
     },
     "detail": {
       "statusTitle": "Active, paused, disabled",
@@ -285,7 +287,11 @@
       },
       "fetched": "Fetched {type}, {size} bytes",
       "url": "Sample URL (on the registered site)",
-      "topic": "Sample topic"
+      "topic": "Sample topic",
+      "service": "Wind service",
+      "tool": "Wind tool",
+      "arguments": "Query arguments (JSON)",
+      "windLead": "Enter the service, tool and arguments from the Wind catalog. A worker performs the trial using this account’s quota. Approval is still required after success."
     },
     "gapKind": {
       "all": "All",

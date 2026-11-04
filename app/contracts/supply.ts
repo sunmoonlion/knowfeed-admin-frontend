@@ -206,6 +206,15 @@ export type RegistrationInput = {
 
 // 试采的样例：目录型给描述；通用网页、订阅源给这个网站上的网址；站内搜索给话题
 export type TrialInput =
+  | {
+      doc_type: 'other_text'
+      source_query: {
+        channel: string
+        service: string
+        tool: string
+        arguments: Record<string, unknown>
+      }
+    }
   | { subject: string; doc_type: string; period_start?: string; period_end?: string }
   | { url: string }
   | { topic: string }
